@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burt's Bees Products - Walmart</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.1); opacity: 0.1; }
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            z-index: 1;
+            position: relative;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            z-index: 1;
+            position: relative;
+        }
+
+        .controls {
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .file-input-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .file-input {
+            position: absolute;
+            left: -9999px;
+            opacity: 0;
+        }
+
+        .file-input-label {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .file-input-label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .search-container {
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .view-toggle {
+            display: flex;
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            overflow: hidden;
+        }
+
+        .view-btn {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .view-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .products-container {
+            padding: 30px;
+            min-height: 400px;
+        }
+
+        .grid-view {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .list-view {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 1px solid #f0f0f0;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .product-image {
+            transform: scale(1.05);
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-name {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        .product-price {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #ff6b6b;
+            margin-bottom: 15px;
+        }
+
+        .product-url {
+            display: inline-block;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .product-url:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .product-url.disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .list-view .product-card {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .list-view .product-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 10px;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+
+        .list-view .product-info {
+            flex: 1;
+            padding: 0;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #fcc;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .stats-item {
+            text-align: center;
+        }
+
+        .stats-number {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stats-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .json-debug {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-family: monospace;
+            font-size: 0.9em;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-container {
+                max-width: none;
+            }
+
+            .grid-view {
+                grid-template-columns: 1fr;
+            }
+
+            .list-view .product-card {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .list-view .product-image {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐝 Burt's Bees Products</h1>
+            <p>Scraped from Walmart.com</p>
+        </div>
+
+        <div class="controls">
+            <div class="file-input-container">
+                <input type="file" id="jsonFile" class="file-input" accept=".json" />
+                <label for="jsonFile" class="file-input-label">📁 Load JSON File</label>
+            </div>
+            
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search products..." />
+            </div>
+            
+            <div class="view-toggle">
+                <button class="view-btn active" onclick="toggleView('grid')">Grid</button>
+                <button class="view-btn" onclick="toggleView('list')">List</button>
+            </div>
+        </div>
+
+        <div class="products-container">
+            <div id="loadingState" class="loading">
+                Load a JSON file to view products
+            </div>
+            
+            <div id="errorState" class="error-message" style="display: none;"></div>
+            
+            <div id="statsContainer" class="stats" style="display: none;">
+                <div class="stats-item">
+                    <div class="stats-number" id="totalProducts">0</div>
+                    <div class="stats-label">Total Products</div>
+                </div>
+                <div class="stats-item">
+                    <div class="stats-number" id="filteredProducts">0</div>
+                    <div class="stats-label">Shown</div>
+                </div>
+                <div class="stats-item">
+                    <div class="stats-number" id="avgPrice">$0.00</div>
+                    <div class="stats-label">Avg Price</div>
+                </div>
+            </div>
+            
+            <div id="productsGrid" class="grid-view"></div>
+        </div>
+    </div>
+
+    <script>
+        let allProducts = [];
+        let filteredProducts = [];
+        let currentView = 'grid';
+
+        // Sample data for demonstration
+        const sampleData = [
+            {
+                "name": "Burt's Bees Toothpaste Fluoride-Free Whitening Purely White Zen Peppermint 4.7 oz",
+                "price": "$5.97",
+                "url": "https://www.walmart.com/ip/Burt-s-Bees-Toothpaste-Fluoride-Free-Whitening-Purely-White-Zen-Peppermint-4-7-oz/47075066",
+                "image_url": "https://i5.walmartimages.com/asr/47075066.jpg"
+            },
+            {
+                "name": "Burt's Bees Toothpaste Fluoride-Free Whitening Purely White Cool Mint 4.7 oz",
+                "price": "$5.97",
+                "url": "https://www.walmart.com/ip/Burt-s-Bees-Toothpaste-Fluoride-Free-Whitening-Purely-White-Cool-Mint-4-7-oz/47075065",
+                "image_url": "https://i5.walmartimages.com/asr/47075065.jpg"
+            }
+        ];
+
+        // Load sample data on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            loadProducts(sampleData);
+        });
+
+        // File input handler
+        document.getElementById('jsonFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const jsonText = e.target.result;
+                        console.log('Raw JSON content:', jsonText);
+                        
+                        const data = JSON.parse(jsonText);
+                        console.log('Parsed data:', data);
+                        
+                        if (Array.isArray(data)) {
+                            loadProducts(data);
+                        } else if (typeof data === 'object' && data !== null) {
+                            loadProducts([data]);
+                        } else {
+                            throw new Error('Data is not an array or object');
+                        }
+                    } catch (error) {
+                        console.error('JSON parsing error:', error);
+                        showError(`Invalid JSON file format: ${error.message}`);
+                    }
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            filteredProducts = allProducts.filter(product => {
+                const name = (product.name || '').toLowerCase();
+                const price = (product.price || '').toLowerCase();
+                return name.includes(searchTerm) || price.includes(searchTerm);
+            });
+            renderProducts();
+        });
+
+        // Function to extract price from complex price strings
+        function extractPrice(priceString) {
+            if (!priceString || typeof priceString !== 'string') {
+                return 'Price not available';
+            }
+            
+            // Look for price patterns like $4.97, $497, etc.
+            const priceMatch = priceString.match(/\$(\d+(?:\.\d{2})?)/);
+            if (priceMatch) {
+                const price = parseFloat(priceMatch[1]);
+                // If price is over $100 and looks like it might be missing decimal point
+                if (price > 100 && !priceMatch[1].includes('.')) {
+                    // Check if there's a "current price" indicator
+                    const currentPriceMatch = priceString.match(/current price \$(\d+(?:\.\d{2})?)/);
+                    if (currentPriceMatch) {
+                        return `$${currentPriceMatch[1]}`;
+                    }
+                }
+                return `$${price.toFixed(2)}`;
+            }
+            
+            return priceString;
+        }
+
+        // Function to validate and clean product data
+        function validateProduct(product) {
+            return {
+                name: product.name || 'Unknown Product',
+                price: extractPrice(product.price),
+                url: product.url && product.url !== 'No URL found' ? product.url : null,
+                image_url: product.image_url || null
+            };
+        }
+
+        function loadProducts(products) {
+            try {
+                console.log('Loading products:', products);
+                
+                // Validate and clean each product
+                allProducts = products.map(validateProduct);
+                filteredProducts = allProducts;
+                
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('errorState').style.display = 'none';
+                document.getElementById('statsContainer').style.display = 'flex';
+                
+                updateStats();
+                renderProducts();
+                
+                console.log('Products loaded successfully:', allProducts);
+            } catch (error) {
+                console.error('Error loading products:', error);
+                showError(`Error loading products: ${error.message}`);
+            }
+        }
+
+        function updateStats() {
+            const totalProducts = allProducts.length;
+            const filteredCount = filteredProducts.length;
+            
+            // Calculate average price
+            const prices = allProducts
+                .map(p => {
+                    if (!p.price || p.price === 'Price not available') return NaN;
+                    return parseFloat(p.price.replace(/[^0-9.]/g, ''));
+                })
+                .filter(p => !isNaN(p) && p > 0);
+                
+            const avgPrice = prices.length > 0 ? 
+                (prices.reduce((a, b) => a + b, 0) / prices.length).toFixed(2) : 
+                '0.00';
+            
+            document.getElementById('totalProducts').textContent = totalProducts;
+            document.getElementById('filteredProducts').textContent = filteredCount;
+            document.getElementById('avgPrice').textContent = '$' + avgPrice;
+        }
+
+        function renderProducts() {
+            const container = document.getElementById('productsGrid');
+            container.className = currentView === 'grid' ? 'grid-view' : 'list-view';
+            
+            if (filteredProducts.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No products found</h3>
+                        <p>Try adjusting your search terms or load a different JSON file.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredProducts.map(product => {
+                const imageUrl = product.image_url || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjhmOWZhIi8+CjxwYXRoIGQ9Ik0xMDAgNjBMMTQwIDEwMEgxMjBWMTQwSDgwVjEwMEg2MEwxMDAgNjBaIiBmaWxsPSIjZGVlMmU2Ii8+CjwvZz4KPC9zdmc+';
+                
+                const urlElement = product.url ? 
+                    `<a href="${product.url}" target="_blank" class="product-url">View on Walmart</a>` :
+                    `<span class="product-url disabled">No URL Available</span>`;
+                
+                return `
+                    <div class="product-card">
+                        <img src="${imageUrl}" alt="${product.name}" class="product-image" 
+                             onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjZjhmOWZhIi8+CjxwYXRoIGQ9Ik0xMDAgNjBMMTQwIDEwMEgxMjBWMTQwSDgwVjEwMEg2MEwxMDAgNjBaIiBmaWxsPSIjZGVlMmU2Ii8+CjwvZz4KPC9zdmc+'" />
+                        <div class="product-info">
+                            <h3 class="product-name">${product.name}</h3>
+                            <div class="product-price">${product.price}</div>
+                            ${urlElement}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            updateStats();
+        }
+
+        function toggleView(view) {
+            currentView = view;
+            
+            // Update button states
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            renderProducts();
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorState');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            document.getElementById('loadingState').style.display = 'none';
+        }
+
+        // Drag and drop functionality
+        let dragCounter = 0;
+
+        document.addEventListener('dragenter', function(e) {
+            e.preventDefault();
+            dragCounter++;
+            if (e.dataTransfer.types.includes('Files')) {
+                document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            }
+        });
+
+        document.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            dragCounter--;
+            if (dragCounter === 0) {
+                document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            }
+        });
+
+        document.addEventListener('dragover', function(e) {
+            e.preventDefault();
+        });
+
+        document.addEventListener('drop', function(e) {
+            e.preventDefault();
+            dragCounter = 0;
+            document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0 && files[0].type === 'application/json') {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        loadProducts(Array.isArray(data) ? data : [data]);
+                    } catch (error) {
+                        showError(`Invalid JSON file format: ${error.message}`);
+                    }
+                };
+                reader.readAsText(files[0]);
+            } else {
+                showError('Please drop a valid JSON file');
+            }
+        });
+    </script>
+</body>
+</html>
