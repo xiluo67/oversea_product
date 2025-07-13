@@ -656,5 +656,45 @@
             }
         });
     </script>
+    <!-- Authentication Modal -->
+<div id="loginOverlay" style="position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 9999;">
+    <form id="loginForm" style="background: white; padding: 30px 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); width: 300px;">
+        <h2 style="margin-bottom: 20px; text-align: center; color: #333;">🔐 Login</h2>
+        <input type="text" id="username" placeholder="Username" required style="width: 100%; margin-bottom: 15px; padding: 10px; border-radius: 8px; border: 1px solid #ccc;">
+        <input type="password" id="password" placeholder="Password" required style="width: 100%; margin-bottom: 20px; padding: 10px; border-radius: 8px; border: 1px solid #ccc;">
+        <button type="submit" style="width: 100%; padding: 12px; border: none; border-radius: 8px; background: #667eea; color: white; font-weight: bold; cursor: pointer;">Login</button>
+        <p id="loginError" style="color: red; font-size: 0.9em; margin-top: 10px; display: none;">Invalid credentials</p>
+    </form>
+</div>
+
+<script>
+    const loginForm = document.getElementById('loginForm');
+    const loginOverlay = document.getElementById('loginOverlay');
+    const loginError = document.getElementById('loginError');
+
+    const VALID_USERNAME = "bee";
+    const VALID_PASSWORD = "honey123";
+
+    // Check saved login
+    window.addEventListener('DOMContentLoaded', () => {
+        const stored = localStorage.getItem('isAuthenticated');
+        if (stored === 'true') {
+            loginOverlay.style.display = 'none';
+        }
+    });
+
+    loginForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
+
+        if (username === VALID_USERNAME && password === VALID_PASSWORD) {
+            localStorage.setItem('isAuthenticated', 'true');
+            loginOverlay.style.display = 'none';
+        } else {
+            loginError.style.display = 'block';
+        }
+    });
+</script>
 </body>
 </html>
